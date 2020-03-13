@@ -1,5 +1,6 @@
 '''Celery task for scrapping data'''
 import re
+import os
 from celery.task.schedules import crontab
 from celery.decorators import periodic_task
 from celery.utils.log import get_task_logger
@@ -12,7 +13,7 @@ from .models import Jumia
 LOGGER = get_task_logger(__name__)
 
 
-@periodic_task(run_every=(crontab(minute='*/10')),
+@periodic_task(run_every=(crontab(minute=os.environ.get('CELERY_TIME', ''))),
                name="task_scrap_jumia",
                ignore_result=True)
 def task_scrap_jumia():
