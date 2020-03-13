@@ -1,0 +1,6 @@
+[MASTER]
+ignore=CVS, migrations, base
+
+[MESSAGES CONTROL]
+disable=missing-docstring,
+        import-error

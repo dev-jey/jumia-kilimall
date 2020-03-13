@@ -1,0 +1,18 @@
+{
+    "addons": [
+      "heroku-postgresql"
+    ],
+    "buildpacks": [
+  
+    ],
+    "description": "This is the application backend",
+    "env": {
+    },
+    "formation": {
+    },
+    "name": "JKM backend",
+    "scripts": {
+    },
+    "stack": "heroku-18"
+  }
+  

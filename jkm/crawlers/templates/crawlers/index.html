@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <h1>Total: {{total_length}}</h1>
+    </div>
+    {% for product in products %}
+     Old Price - {{product.old_price }} - <br>
+     New Price - {{product.new_price }} - <br>
+    Discount - {{product.discount }} - <br>
+    Discount percentage - {{product.discount_percentage }} - <br>
+    Link - <a href="{{product.link }}" target="_blank">click here</a> - <br>
+    <img src="{{product.image }}" width="100" alt="">
+    <br><br>
+    <hr>
+    <br><br>
+    {% endfor %}
+</body>
+</html>
