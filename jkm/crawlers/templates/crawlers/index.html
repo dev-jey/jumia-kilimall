@@ -11,11 +11,15 @@
         <h1>Total: {{total_length}}</h1>
     </div>
     {% for product in products %}
-     Old Price - {{product.old_price }} - <br>
-     New Price - {{product.new_price }} - <br>
-    Discount - {{product.discount }} - <br>
-    Discount percentage - {{product.discount_percentage }} - <br>
-    Link - <a href="{{product.link }}" target="_blank">click here</a> - <br>
+     Name - {{product.brand}} {{product.name }} <br>
+     Average Rating - {{product.avg_rating }}/5 <br>
+     Total number of Ratings - {{product.total_ratings }} <br>
+     Old Price - {{product.old_price }} <br>
+     New Price - {{product.new_price }}<br>
+    Discount - {{product.discount }} <br>
+    Discount percentage - {{product.discount_percentage }} <br>
+    Link - <a href="{{product.link }}" target="_blank">click here</a><br>
+    <b>Category</b> {{product.category}}<br>
     <img src="{{product.image }}" width="100" alt="">
     <br><br>
     <hr>

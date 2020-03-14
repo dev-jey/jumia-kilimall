@@ -4,7 +4,10 @@ from django.db import models
 
 class Jumia(models.Model):
     name = models.CharField(max_length=100)
+    brand = models.CharField(max_length=100)
     old_price = models.CharField(max_length=100)
+    total_ratings = models.CharField(max_length=100)
+    avg_rating = models.CharField(max_length=100)
     new_price = models.CharField(max_length=100)
     discount_percentage = models.CharField(max_length=100)
     link = models.CharField(max_length=1000)
