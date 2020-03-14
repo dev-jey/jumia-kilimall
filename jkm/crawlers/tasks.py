@@ -1,10 +1,14 @@
 '''Celery task for scrapping data'''
-import re
 import os
+import re
 from celery.task.schedules import crontab
 from celery.decorators import periodic_task
 from celery.utils.log import get_task_logger
-
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+# from django.http import HttpResponse
+from jkm import celery_app
 import requests
 from bs4 import BeautifulSoup
 from .models import Jumia
@@ -13,9 +17,7 @@ from .models import Jumia
 LOGGER = get_task_logger(__name__)
 
 
-@periodic_task(run_every=(crontab(minute=os.environ.get('CELERY_TIME', ''))),
-               name="task_scrap_jumia",
-               ignore_result=True)
+@celery_app.task(name="scrap-jumia")
 def task_scrap_jumia():
     try:
         soup = scrap_data_jumia()
@@ -181,3 +183,119 @@ def find_name(product):
         brand = name[0]
         product_name = name[-1]
         return brand, product_name
+
+
+
+
+
+
+
+@celery_app.task(name="scrap-kilimall")
+def task_scrap_kilimall():
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument('--window-size=1920,1080')
+    driver = webdriver.Chrome(ChromeDriverManager().install(),
+                              chrome_options=chrome_options)
+    driver.implicitly_wait(5)
+
+    driver.get('https://www.kilimall.co.ke/new/')
+
+    categories = driver.find_elements_by_class_name("cls_item_content")
+
+    categories_links = [get_category_url(category) for category in categories]
+    for category_name in categories_links:
+        try:
+            driver.implicitly_wait(5)
+            print(category_name[[*category_name][0]])
+            driver.get(category_name[[*category_name][0]])
+            sort_products(driver, category_name['gc_id'], category_name)
+            gc_id = category_name['gc_id']
+            pages = driver.find_element_by_class_name(
+                "el-pager").find_elements_by_class_name("number")[-1].text
+            for i in range(1, int(pages)+1):
+                new_url = f'https://www.kilimall.co.ke/new/commoditysearch?c={gc_id}&page={i}'
+                print(new_url)
+                driver.get(new_url)
+                sort_products(driver, category_name['gc_id'], category_name)
+        except:
+            print('Connection refused')
+
+
+def get_category_url(category):
+    '''Get url ids for categories'''
+    gc_id = 1057
+
+    if 'Electronics' in category.text:
+        gc_id = 1250
+    elif 'Computers' in category.text:
+        gc_id = 1072
+    elif 'Home' in category.text:
+        gc_id = 1466
+    elif 'Clothes' in category.text:
+        gc_id = 1294
+    elif 'Shoes' in category.text:
+        gc_id = 1350
+    elif 'Bags' in category.text:
+        gc_id = 1385
+    elif 'Sports' in category.text:
+        gc_id = 1385
+    elif 'Health' in category.text:
+        gc_id = 1615
+    elif 'Baby' in category.text:
+        gc_id = 1504
+    elif 'Office' in category.text:
+        gc_id = 1563
+    elif 'Automotive' in category.text:
+        gc_id = 1603
+    new_category = category.text.replace(' ', '%20').replace('&', '%26')
+    return {category.text: f'https://www.kilimall.co.ke/new/commoditysearch?c={gc_id}&aside={new_category}&gc_id={gc_id}',
+            'gc_id': gc_id}
+
+
+def sort_products(driver, gc_id, category_name):
+    '''Get products from categories and add them to an array'''
+    data = []
+    data_ = driver.find_element_by_class_name('imgbox')
+    products = data_.find_elements_by_class_name("el-col-6")
+    for product in products:
+        product_data = {}
+        name = product.find_element_by_class_name("wordwrap").text
+        new_price = ''.join(product.find_element_by_tag_name(
+            "span").text.split(' ')[::-1][0].split(','))
+        discount_percentage = product.find_element_by_class_name(
+            "greenbox").text.split(' ')[0].split('%')[0]
+        old_price = ''.join(product.find_element_by_class_name(
+            "twoksh").text.split(' ')[::-1][0].split(","))
+        total_ratings = product.find_element_by_class_name(
+            "sixtwo").text.replace('(', '').replace(')', '')
+        link = product.find_element_by_class_name(
+            "showHand").get_attribute("href")
+        image = product.find_element_by_class_name(
+            "showHand").find_element_by_tag_name("img").get_attribute("src")
+        discount = int(old_price) - int(new_price)
+        category = [*category_name][0]
+        product_data = {'name': name,
+                        'new_price': new_price,
+                        "discount_percentage": discount_percentage,
+                        "old_price": old_price,
+                        "total_ratings": total_ratings,
+                        'link': link,
+                        "image": image,
+                        "discount": discount,
+                        'category': category}
+        print(product_data)
+        data.append(product_data)
+
+
+celery_app.conf.beat_schedule = {
+    # Execute every x minutes.
+    'run-kilimall-task': {
+        'task': 'scrap-kilimall',
+        'schedule': crontab(minute=os.environ('CELERY_TIME', '')),
+    }, 
+    'run-jumia-task': {
+        'task': 'scrap-jumia',
+        'schedule': crontab(minute=os.environ('CELERY_TIME', '')),
+    },
+}
