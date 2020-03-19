@@ -11,10 +11,15 @@ from selenium.webdriver.chrome.options import Options
 from jkm import celery_app
 import requests
 from bs4 import BeautifulSoup
-from .models import Jumia
+from .models import AllData, Sites
 
 
 LOGGER = get_task_logger(__name__)
+
+
+'''
+Jumia scrapping script by bs4
+'''
 
 
 @celery_app.task(name="scrap-jumia")
@@ -26,27 +31,29 @@ def task_scrap_jumia():
         all_products = []
         for item in nav:
             if item.get('href'):
-                category = {
-                    'link': item['href']
-                }
-                categories.append(category)
+                if item['href'].startswith("/") and item['href'].endswith('/') and len(item.select('span.text')):
+                    categories.append({
+                        'name': item.select('span.text')[::-1][-1].text,
+                        'link': item['href'],
+                    })
 
         total_length = 0
         for category in categories:
-            if category['link'].startswith("/") and category['link'].endswith('/'):
-                link = f"https://www.jumia.co.ke{category['link']}?page=1"
-                soup = scrap_data_jumia_categories(category, link)
-                pages = get_pagination_data(soup)
-                for i in range(1, int(pages)+1):
-                    link = f"https://www.jumia.co.ke{category['link']}?page={i}"
-                    print('\n\n\n', link, '\n\n\n\n\n')
+            link = f"https://www.jumia.co.ke{category['link']}?page=1"
+            soup = scrap_data_jumia_categories(category, link)
+            pages = get_pagination_data(soup)
+            for i in range(1, int(pages)+1):
+                link = f"https://www.jumia.co.ke{category['link']}?page={i}"
+                print('\n\n\n', link, '\n\n\n\n\n')
 
-                    soup_ = scrap_data_jumia_categories(category, link)
-                    if soup_:
-                        persist_to_db(soup_, category, total_length, all_products)
+                soup_ = scrap_data_jumia_categories(category, link)
+                if soup_:
+                    persist_to_db(soup_, category['name'],
+                                  total_length, all_products)
     except ValueError as e_x:
         LOGGER.info(e_x, 'Didnt succeed')
         print(e_x)
+
 
 def persist_to_db(soup, category, total_length, all_products):
     '''
@@ -54,20 +61,22 @@ def persist_to_db(soup, category, total_length, all_products):
     '''
     products = soup.find_all(class_="sku")
     product_details = sort_product_details_out(products, category)
-    total_length += product_details['length'] 
+    total_length += product_details['length']
     all_products.append(product_details['prods'])
+
 
 def get_pagination_data(soup):
     '''
     Get pagination data
     '''
     pages = 1
-    for x in soup.find_all('section',attrs={'class':'pagination'}):
+    for x in soup.find_all('section', attrs={'class': 'pagination'}):
         try:
             pages = x.find_all('a', href=True)[:-1][-1].text
         except:
             pass
     return pages
+
 
 def scrap_data_jumia_categories(category, url):
     '''
@@ -78,6 +87,7 @@ def scrap_data_jumia_categories(category, url):
         soup = BeautifulSoup(page.content, 'html.parser')
         return soup
 
+
 def scrap_data_jumia():
     '''
     Get catrgories
@@ -85,6 +95,7 @@ def scrap_data_jumia():
     page = requests.get("https://www.jumia.co.ke/")
     soup = BeautifulSoup(page.content, 'html.parser')
     return soup
+
 
 def sort_product_details_out(products, category):
     '''
@@ -112,7 +123,9 @@ def sort_product_details_out(products, category):
                 'discount': discount,
                 'category': category
             }
-            Jumia.objects.update_or_create(
+            LOGGER.info("Saving " + category + " products to database....")
+            jumia_site = Sites.objects.get(name="Jumia")
+            AllData.objects.update_or_create(
                 name=product_name,
                 brand=brand,
                 total_ratings=str(total_ratings),
@@ -123,12 +136,14 @@ def sort_product_details_out(products, category):
                 discount_percentage=str(discount_percentage),
                 link=link,
                 image=image,
+                site=jumia_site,
                 category=category
-                )
+            )
             prods.append(prod)
         except Exception as e:
             print(e)
-    return {'length':len(prods), 'prods': prods}
+    return {'length': len(prods), 'prods': prods}
+
 
 def find_ratings(product):
     '''
@@ -138,10 +153,12 @@ def find_ratings(product):
     avg_rating = 0
     for item in product.find_all(class_='total-ratings'):
         values = item.find_all(text=True)
-        total_ratings = ''.join(values).strip('()') 
+        total_ratings = ''.join(values).strip('()')
     for item in product.find_all(class_='stars'):
-        avg_rating = round(int(item['style'].split()[-1].replace("%", ""))/100 * 5, 1)
+        avg_rating = round(
+            int(item['style'].split()[-1].replace("%", ""))/100 * 5, 1)
     return total_ratings, avg_rating
+
 
 def find_image(product):
     '''
@@ -150,12 +167,14 @@ def find_image(product):
     for img in product.find_all('img', attrs={'src': re.compile("^https://")}):
         return img.get('src')
 
+
 def find_links(product):
     ''''
     Find links helper
     '''
-    for link in product.find_all('a',href=True):
+    for link in product.find_all('a', href=True):
         return link.get('href')
+
 
 def find_prices(product):
     '''
@@ -174,6 +193,7 @@ def find_prices(product):
             old_price = x[-5].replace(',', '')
         return old_price, new_price, discount_percentage
 
+
 def find_name(product):
     '''
     Get name details of a product
@@ -185,9 +205,9 @@ def find_name(product):
         return brand, product_name
 
 
-
-
-
+'''
+Kilimall scrapping script by selenium
+'''
 
 
 @celery_app.task(name="scrap-kilimall")
@@ -253,6 +273,17 @@ def get_category_url(category):
             'gc_id': gc_id}
 
 
+def get_star_rating(product):
+    '''
+    Get a products average rating
+    '''
+    stars = []
+    for i in product.find_element_by_class_name("rateList").find_elements_by_tag_name("i"):
+        if i.get_attribute("style") == 'color: rgb(247, 186, 42);':
+            stars.append(i)
+    return len(stars)
+
+
 def sort_products(driver, gc_id, category_name):
     '''Get products from categories and add them to an array'''
     data = []
@@ -261,6 +292,7 @@ def sort_products(driver, gc_id, category_name):
     for product in products:
         product_data = {}
         name = product.find_element_by_class_name("wordwrap").text
+        avg_rating = get_star_rating(product)
         new_price = ''.join(product.find_element_by_tag_name(
             "span").text.split(' ')[::-1][0].split(','))
         discount_percentage = product.find_element_by_class_name(
@@ -277,6 +309,7 @@ def sort_products(driver, gc_id, category_name):
         category = [*category_name][0]
         product_data = {'name': name,
                         'new_price': new_price,
+                        'avg_rating': avg_rating,
                         "discount_percentage": discount_percentage,
                         "old_price": old_price,
                         "total_ratings": total_ratings,
@@ -284,7 +317,22 @@ def sort_products(driver, gc_id, category_name):
                         "image": image,
                         "discount": discount,
                         'category': category}
-        print(product_data)
+        LOGGER.info("Saving " + category + " products to database....")
+        kilimall_site = Sites.objects.get(name="Kilimall")
+        AllData.objects.update_or_create(
+            name=name,
+            brand='',
+            total_ratings=str(total_ratings),
+            avg_rating=str(avg_rating),
+            old_price=str(old_price),
+            new_price=str(new_price),
+            discount=str(discount),
+            discount_percentage=str(discount_percentage),
+            link=link,
+            image=image,
+            site=kilimall_site,
+            category=category
+        )
         data.append(product_data)
 
 
@@ -292,10 +340,10 @@ celery_app.conf.beat_schedule = {
     # Execute every x minutes.
     'run-kilimall-task': {
         'task': 'scrap-kilimall',
-        'schedule': crontab(minute=os.environ('CELERY_TIME', '')),
-    }, 
+        'schedule': crontab(minute=os.environ.get('CELERY_TIME', '')),
+    },
     'run-jumia-task': {
         'task': 'scrap-jumia',
-        'schedule': crontab(minute=os.environ('CELERY_TIME', '')),
+        'schedule': crontab(minute=os.environ.get('CELERY_TIME', '')),
     },
 }

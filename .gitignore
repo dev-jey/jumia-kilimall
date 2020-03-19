@@ -6,3 +6,5 @@ __pycache__/
 celerybeat-schedule
 dump.rdb
 celerybeat.pid
+.ipynb_checkpoints
+Untitled.ipynb

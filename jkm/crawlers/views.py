@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Jumia
+from .models import AllData
 from .tasks import task_scrap_jumia
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -16,6 +16,6 @@ def index(request):
     '''
     Get all records and render them to the user
     '''
-    products = Jumia.objects.all()
+    products = AllData.objects.all()
     return render(request, 'crawlers/index.html', {'products': products, 'total_length': len(products)})
     # return HttpResponse('James')

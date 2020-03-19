@@ -2,7 +2,11 @@ from django.db import models
 
 # Create your models here.
 
-class Jumia(models.Model):
+class Sites(models.Model):
+    name = models.CharField(max_length=100)
+
+
+class AllData(models.Model):
     name = models.CharField(max_length=100)
     brand = models.CharField(max_length=100)
     old_price = models.CharField(max_length=100)
@@ -14,6 +18,7 @@ class Jumia(models.Model):
     image = models.CharField(max_length=1000)
     discount = models.CharField(max_length=100)
     category = models.CharField(max_length=100)
+    site = models.ForeignKey(Sites, on_delete=models.CASCADE, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

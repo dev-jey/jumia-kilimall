@@ -1,0 +1,23 @@
+[
+    {
+        "model": "crawlers.Sites",
+        "pk": 1,
+        "fields": {
+            "name": "Jumia"
+        }
+    },
+    {
+        "model": "crawlers.Sites",
+        "pk": 2,
+        "fields": {
+            "name": "Kilimall"
+        }
+    },
+    {
+        "model": "crawlers.Sites",
+        "pk": 3,
+        "fields": {
+            "name": "Masoko"
+        }
+    }
+]
