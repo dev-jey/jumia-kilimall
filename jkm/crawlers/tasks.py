@@ -82,10 +82,9 @@ def scrap_data_jumia_categories(category, url):
     '''
     Get products from every category
     '''
-    if(category['link'].startswith('/')):
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content, 'html.parser')
-        return soup
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    return soup
 
 
 def scrap_data_jumia():
@@ -104,10 +103,13 @@ def sort_product_details_out(products, category):
     prods = []
     for product in products:
         try:
-            # print(product)
-            old_price, new_price, discount_percentage = find_prices(product)
-            total_ratings, avg_rating = find_ratings(product)
-            brand, product_name = find_name(product)
+            old_price = find_prices(product)[0]
+            new_price = find_prices(product)[1]
+            discount_percentage = find_prices(product)[2]
+            total_ratings = find_ratings(product)[0]
+            avg_rating = find_ratings(product)[1]
+            brand = find_name(product)[0]
+            product_name = find_name(product)[1]
             link = find_links(product)
             image = find_image(product)
             discount = float(old_price)-float(new_price)
@@ -140,8 +142,8 @@ def sort_product_details_out(products, category):
                 category=category
             )
             prods.append(prod)
-        except Exception as e:
-            print(e)
+        except Exception:
+            pass
     return {'length': len(prods), 'prods': prods}
 
 
@@ -157,7 +159,7 @@ def find_ratings(product):
     for item in product.find_all(class_='stars'):
         avg_rating = round(
             int(item['style'].split()[-1].replace("%", ""))/100 * 5, 1)
-    return total_ratings, avg_rating
+    return [total_ratings, avg_rating]
 
 
 def find_image(product):
@@ -180,8 +182,8 @@ def find_prices(product):
     '''
     Find prices and discounts from product
     '''
-    for a in product.find_all(class_='price-container'):
-        x = a.find_all(text=True)
+    for price in product.find_all(class_='price-container'):
+        x = price.find_all(text=True)
         old_price = 0
         new_price = 0
         discount_percentage = 0
@@ -191,7 +193,7 @@ def find_prices(product):
             discount_percentage = float(x[0].strip('%')) * -1
         else:
             old_price = x[-5].replace(',', '')
-        return old_price, new_price, discount_percentage
+        return [old_price, new_price, discount_percentage]
 
 
 def find_name(product):
@@ -202,14 +204,12 @@ def find_name(product):
         name = item.find_all(text=True)
         brand = name[0]
         product_name = name[-1]
-        return brand, product_name
+        return [brand, product_name]
 
 
 '''
 Kilimall scrapping script by selenium
 '''
-
-
 @celery_app.task(name="scrap-kilimall")
 def task_scrap_kilimall():
     chrome_options = Options()
