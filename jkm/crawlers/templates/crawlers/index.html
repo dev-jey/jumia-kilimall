@@ -10,7 +10,7 @@
     <div>
         <h1>Total: {{total_length}}</h1>
     </div>
-    {% for product in products %}
+    {% for product in products.itertuples %}
      Name - {{product.brand}} {{product.name }} <br>
      Average Rating - {{product.avg_rating }}/5 <br>
      Total number of Ratings - {{product.total_ratings }} <br>

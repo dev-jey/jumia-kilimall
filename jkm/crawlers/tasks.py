@@ -192,7 +192,7 @@ def find_prices(product):
             new_price = x[-8].replace(',', '')
             discount_percentage = float(x[0].strip('%')) * -1
         else:
-            old_price = x[-5].replace(',', '')
+            new_price = x[-5].replace(',', '')
         return [old_price, new_price, discount_percentage]
 
 
