@@ -12,17 +12,17 @@ This is a web application that implements a web scrapper to get data for product
 ### How To Set Up Locally
 Install pipenv
 ```
-pip install pipenv
+pip install virtualenv
 ```
 
 Create virtual environment
 ```
-pipenv shell
+virtualenv -p python3 env  && source env/bin/activate
 ```
 
 Install dependencies
 ```
-pipenv install
+pip install -r requirements.txt
 ```
 
 Migrate to DB
