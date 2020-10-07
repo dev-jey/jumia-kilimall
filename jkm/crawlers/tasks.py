@@ -194,10 +194,28 @@ Kilimall scrapping script by selenium
 @celery_app.task(name="scrap-kilimall")
 def task_scrap_kilimall():
     chrome_options = Options()
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument("disable-infobars")
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--headless")
-    chrome_options.add_argument('--window-size=1920,1080')
-    driver = webdriver.Chrome(ChromeDriverManager().install(),
-                              chrome_options=chrome_options)
+    chrome_options.add_argument("--disable-setuid-sandbox") 
+    chrome_options.add_argument("--remote-debugging-port=9222")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+
+    if os.environ.get('CURRENT_ENV') == 'production':
+        chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
+    
+    global driver
+    try:
+        if os.environ.get('CURRENT_ENV') == 'production':
+            driver = webdriver.Chrome(executable_path=str(
+                os.environ.get('CHROMEDRIVER_PATH')), options=options)
+        else:
+            driver = webdriver.Chrome(
+                ChromeDriverManager().install(), options=options)
+    except Exception as e:
+        print(e)
     driver.implicitly_wait(5)
 
     driver.get('https://www.kilimall.co.ke/new/')
