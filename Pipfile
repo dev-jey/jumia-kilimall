@@ -20,6 +20,7 @@ ipython = "*"
 jupyter = "*"
 redis = "*"
 numpy = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"
