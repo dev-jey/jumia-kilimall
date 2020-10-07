@@ -1,31 +1,16 @@
 from django.shortcuts import render
 import pandas as pd
 import numpy as np
-import re
-import os
-from .models import AllData, Sites
-from .tasks import sort_products, get_category_url, get_star_rating
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-from selenium import webdriver
-from celery.utils.log import get_task_logger
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
-
+from .models import AllData
 from django.http import HttpResponse
 import requests
 from bs4 import BeautifulSoup
 
-LOGGER = get_task_logger(__name__)
 
 def index(request):
     '''
     Get all records and render them to the user
     '''
-    task_scrap_kilimall1()
     
     products = AllData.objects.filter().values()
     if not products:
