@@ -216,6 +216,7 @@ def task_scrap_kilimall():
                 ChromeDriverManager().install(), options=options)
     except Exception as e:
         print(e)
+
     driver.implicitly_wait(5)
 
     driver.get('https://www.kilimall.co.ke/new/')
