@@ -101,49 +101,52 @@ def sort_product_details_out(products, category):
     Sort product details into meaningful information
     '''
     prods = []
-    for product in products:
-        try:
-            old_price = find_prices(product)[0]
-            new_price = find_prices(product)[1]
-            discount_percentage = find_prices(product)[2]
-            total_ratings = find_ratings(product)[0]
-            avg_rating = find_ratings(product)[1]
-            brand = find_name(product)[0]
-            product_name = find_name(product)[1]
-            link = find_links(product)
-            image = find_image(product)
-            discount = float(old_price)-float(new_price)
-            prod = {
-                'name': product_name,
-                'total_ratings': total_ratings,
-                'brand': brand,
-                'old_price': old_price,
-                'new_price': new_price,
-                'discount_percentage': discount_percentage,
-                'link': link,
-                'image': image,
-                'discount': discount,
-                'category': category
-            }
-            LOGGER.info("Saving " + category + " products to database....")
-            jumia_site = Sites.objects.get(name="Jumia")
-            AllData.objects.update_or_create(
-                name=product_name,
-                brand=brand,
-                total_ratings=str(total_ratings),
-                avg_rating=str(avg_rating),
-                old_price=str(old_price),
-                new_price=str(new_price),
-                discount=str(discount),
-                discount_percentage=str(discount_percentage),
-                link=link,
-                image=image,
-                site=jumia_site,
-                category=category
-            )
-            prods.append(prod)
-        except Exception:
-            pass
+    for product_group in products:
+        for product in product_group.find_all(class_='prd'):
+            try:
+                old_price = find_prices(product)[0]
+                new_price = find_prices(product)[1]
+                discount_percentage = find_prices(product)[2]
+                total_ratings = find_ratings(product)[0]
+                avg_rating = find_ratings(product)[1]
+                brand = find_name(product)[0]
+                product_name = find_name(product)[1]
+                link = f"https://www.jumia.co.ke{product['href']}"
+                image = product.find('img')['data-src']
+                discount = float(old_price)-float(new_price)
+                prod = {
+                    'name': product_name[0],
+                    'total_ratings': total_ratings,
+                    'brand': brand,
+                    'old_price': old_price,
+                    'new_price': new_price,
+                    'discount_percentage': discount_percentage,
+                    'link': link,
+                    'image': image,
+                    'discount': discount,
+                    'category': category
+                }
+                print(prod)
+                LOGGER.info("Saving " + category + " products to database....")
+                jumia_site = Sites.objects.get(name="Jumia")
+                AllData.objects.update_or_create(
+                    name=product_name,
+                    brand=brand,
+                    total_ratings=str(total_ratings),
+                    avg_rating=str(avg_rating),
+                    old_price=str(old_price),
+                    new_price=str(new_price),
+                    discount=str(discount),
+                    discount_percentage=str(discount_percentage),
+                    link=link,
+                    image=image,
+                    site=jumia_site,
+                    category=category
+                )
+                prods.append(prod)
+            except Exception as e:
+                print(e)
+                pass
     return {'length': len(prods), 'prods': prods}
 
 
@@ -151,60 +154,38 @@ def find_ratings(product):
     '''
     Find total number of ratings and ratings per product
     '''
-    total_ratings = 0
-    avg_rating = 0
-    for item in product.find_all(class_='total-ratings'):
-        values = item.find_all(text=True)
-        total_ratings = ''.join(values).strip('()')
-    for item in product.find_all(class_='stars'):
-        avg_rating = round(
-            int(item['style'].split()[-1].replace("%", ""))/100 * 5, 1)
+    total_ratings = product['data-dimension26']
+    avg_rating = product['data-dimension27']
     return [total_ratings, avg_rating]
 
-
-def find_image(product):
-    '''
-    Find image helper
-    '''
-    for img in product.find_all('img', attrs={'src': re.compile("^https://")}):
-        return img.get('src')
-
-
-def find_links(product):
-    ''''
-    Find links helper
-    '''
-    for link in product.find_all('a', href=True):
-        return link.get('href')
 
 
 def find_prices(product):
     '''
     Find prices and discounts from product
     '''
-    for price in product.find_all(class_='price-container'):
-        x = price.find_all(text=True)
+    old_price = 0
+    new_price = 0
+    discount_percentage = 0
+    if product.find(class_='old'):
+        old_price = float(product.find(class_='old').find(text=True).replace('KSh ', '').replace(',', ''))
+    if product.find(class_='prc')['data-oprc']:
+        old_price = float(product.find(class_='prc')['data-oprc'].replace('KSh ', '').replace(',', ''))
+    else:
         old_price = 0
-        new_price = 0
-        discount_percentage = 0
-        if x[0] != ' ':
-            old_price = x[-3].replace(',', '')
-            new_price = x[-8].replace(',', '')
-            discount_percentage = float(x[0].strip('%')) * -1
-        else:
-            new_price = x[-5].replace(',', '')
-        return [old_price, new_price, discount_percentage]
+    new_price = float(product.find(class_='prc').find(text=True).replace('KSh ', '').replace(',', ''))
+    discount_percentage = float(product.find(class_='tag _dsct').find(text=True).strip('%'))
+    return [old_price, new_price, discount_percentage]
 
 
 def find_name(product):
     '''
     Get name details of a product
     '''
-    for item in product.find_all(class_='title'):
-        name = item.find_all(text=True)
-        brand = name[0]
-        product_name = name[-1]
-        return [brand, product_name]
+    name = product.find(class_='name').find(text=True).split(' ', 1)
+    brand = name[0]
+    product_name = name[1:]
+    return [brand, product_name]
 
 
 '''
@@ -229,6 +210,7 @@ def task_scrap_kilimall():
             driver.implicitly_wait(5)
             print(category_name[[*category_name][0]])
             driver.get(category_name[[*category_name][0]])
+            driver.implicitly_wait(15)
             sort_products(driver, category_name['gc_id'], category_name)
             gc_id = category_name['gc_id']
             pages = driver.find_element_by_class_name(
@@ -237,8 +219,10 @@ def task_scrap_kilimall():
                 new_url = f'https://www.kilimall.co.ke/new/commoditysearch?c={gc_id}&page={i}'
                 print(new_url)
                 driver.get(new_url)
+                driver.implicitly_wait(15)
                 sort_products(driver, category_name['gc_id'], category_name)
-        except:
+        except Exception as e:
+            print(e)
             print('Connection refused')
 
 
@@ -286,54 +270,65 @@ def get_star_rating(product):
 
 def sort_products(driver, gc_id, category_name):
     '''Get products from categories and add them to an array'''
-    data = []
     data_ = driver.find_element_by_class_name('imgbox')
     products = data_.find_elements_by_class_name("el-col-6")
-    for product in products:
-        product_data = {}
-        name = product.find_element_by_class_name("wordwrap").text
-        avg_rating = get_star_rating(product)
-        new_price = ''.join(product.find_element_by_tag_name(
-            "span").text.split(' ')[::-1][0].split(','))
-        discount_percentage = product.find_element_by_class_name(
-            "greenbox").text.split(' ')[0].split('%')[0]
-        old_price = ''.join(product.find_element_by_class_name(
-            "twoksh").text.split(' ')[::-1][0].split(","))
-        total_ratings = product.find_element_by_class_name(
-            "sixtwo").text.replace('(', '').replace(')', '')
-        link = product.find_element_by_class_name(
-            "showHand").get_attribute("href")
-        image = product.find_element_by_class_name(
-            "showHand").find_element_by_tag_name("img").get_attribute("src")
-        discount = int(old_price) - int(new_price)
-        category = [*category_name][0]
-        product_data = {'name': name,
-                        'new_price': new_price,
-                        'avg_rating': avg_rating,
-                        "discount_percentage": discount_percentage,
-                        "old_price": old_price,
-                        "total_ratings": total_ratings,
-                        'link': link,
-                        "image": image,
-                        "discount": discount,
-                        'category': category}
-        LOGGER.info("Saving " + category + " products to database....")
-        kilimall_site = Sites.objects.get(name="Kilimall")
-        AllData.objects.update_or_create(
-            name=name,
-            brand='',
-            total_ratings=str(total_ratings),
-            avg_rating=str(avg_rating),
-            old_price=str(old_price),
-            new_price=str(new_price),
-            discount=str(discount),
-            discount_percentage=str(discount_percentage),
-            link=link,
-            image=image,
-            site=kilimall_site,
-            category=category
-        )
-        data.append(product_data)
+    try:
+        for product in products:
+            product_data = {}
+            name = product.find_element_by_class_name("wordwrap").text
+            avg_rating = get_star_rating(product)
+            new_price = ''.join(product.find_element_by_tag_name(
+                "span").text.split(' ')[::-1][0].split(','))
+            discount_percentage = 0
+            old_price = 0
+            total_ratings = 0
+            link = None
+            image = None
+            try:
+                discount_percentage = product.find_element_by_class_name(
+                    "greenbox").text.split(' ')[0].split('%')[0]
+                old_price = ''.join(product.find_element_by_class_name(
+                    "twoksh").text.split(' ')[::-1][0].split(","))
+                total_ratings = product.find_element_by_class_name(
+                    "sixtwo").text.replace('(', '').replace(')', '')
+                link = product.find_element_by_class_name(
+                    "showHand").get_attribute("href")
+                # import pdb; pdb.set_trace()
+                image = product.find_element_by_class_name(
+                    "showHand").find_element_by_tag_name("img").get_attribute("src")
+            except Exception as e:
+                print(e)
+                pass
+            discount = int(old_price) - int(new_price)
+            category = [*category_name][0]
+            product_data = {'name': name,
+                            'new_price': new_price,
+                            'avg_rating': avg_rating,
+                            "discount_percentage": discount_percentage,
+                            "old_price": old_price,
+                            "total_ratings": total_ratings,
+                            'link': link,
+                            "image": image,
+                            "discount": discount,
+                            'category': category}
+            LOGGER.info("Saving " + category + " products to database....")
+            kilimall_site = Sites.objects.get(name="Kilimall")
+            AllData.objects.update_or_create(
+                name=name,
+                brand='',
+                total_ratings=str(total_ratings),
+                avg_rating=str(avg_rating),
+                old_price=str(old_price),
+                new_price=str(new_price),
+                discount=str(discount),
+                discount_percentage=str(discount_percentage),
+                link=link,
+                image=image,
+                site=kilimall_site,
+                category=category
+            )
+    except Exception as e:
+        print(e)
 
 
 celery_app.conf.beat_schedule = {

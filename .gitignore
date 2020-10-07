@@ -4,6 +4,7 @@ env/
 __pycache__/
 .DS_Store
 celerybeat-schedule
+celerybeat-schedule.db
 dump.rdb
 celerybeat.pid
 .ipynb_checkpoints
