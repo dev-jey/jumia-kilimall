@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'index.css' %}" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap" rel="stylesheet">
+    <title>Jumia-Killimall Price Comparison</title>
+</head>
+
+<body>
+    <nav>
+        <div class="container nav-container">
+            <div class="nav-logo">
+                <img src="{% static 'navlogo.svg' %}" alt="">
+            </div>
+
+            <div class="search-icon">
+                <div>
+                    <img src="{% static 'search.svg' %}" alt="">
+                    <label for=""><b>Search</b></label>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-section">
+        <div class="container">
+        {% block body_block %}No Products{% endblock %}
+        </div>
+    </div>
+
+</body>
+
+</html>

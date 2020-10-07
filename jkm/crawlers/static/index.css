@@ -1,0 +1,164 @@
+html{
+    font-family: 'Nunito', sans-serif;
+}
+body{
+    background-color: rgb(255, 255, 255);
+    padding: 0;
+    margin: 0;
+}
+a{
+    text-decoration: none;
+    color: inherit
+}
+nav{
+    width: 100%;
+    box-shadow: 0px 0px 10px silver;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: #fff;
+}
+.container{
+    max-width: 1280px;
+    margin:auto;
+    display: grid;
+    padding:0 1rem;
+}
+.nav-container{
+    grid-template-columns: 50% 50%;
+}
+.nav-logo img{
+    max-width: 150px;
+}
+.search-icon{
+    display: grid;
+    font-size: .9rem;
+    font-weight: bold;
+    align-content: center;
+    justify-content: end;
+    width: 100%;
+    height: 100%;
+    text-align: right;
+}
+
+.search-icon img{
+width: 1.2rem;
+padding: 0;
+margin: 0;
+}
+.search-icon div{
+    display: flex;
+}
+.search-icon label{
+    font-weight: bolder;
+    height: 100%;
+    cursor: pointer;
+}
+
+.search-icon div{
+    cursor: pointer;
+}
+
+.products{
+    width: 100%;
+    display: grid;
+    margin: auto;
+    padding: 1rem auto;
+    gap: 1.5rem;
+    margin: 2rem auto;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.product{
+    box-shadow: 0px 0px 10px silver;
+    height: 100%;
+    /* background:linear-gradient(to bottom, rgb(255, 255, 255),
+    rgb(255, 255, 255),
+    rgb(255, 255, 255),
+    rgb(255, 255, 254),
+    rgb(255, 255, 253),
+    rgb(252, 252, 252),
+    rgb(241, 241, 241),
+    rgb(230, 230, 230)); */
+    position: relative;
+}
+
+.product-details{
+    padding: 1rem;
+}
+
+.product .name{
+    font-weight: 1400 !important;
+    font-size: .75rem;
+}
+
+.product .name-container{
+    height: 100%;
+    min-height: 30px;
+    padding-bottom: .75rem;
+    height: 35px;
+    overflow: hidden;
+}
+
+.product .avg-rating{
+    padding: .75rem;
+    font-size: .75rem;
+}
+.product .old-price, .product .new-price{
+    font-size: 1.2rem;
+}
+.product .old-price{
+    color: rgb(73, 73, 73);
+    text-decoration: line-through;
+    font-size: .75rem;
+}
+.product .new-price{
+    color: #F68B1E
+}
+
+.product .percentage-discount{
+    position: absolute;
+    top: 0;
+    background-color: red;
+    right: 0;
+    margin-right: -.5rem;
+    border-radius: 10px;
+    font-size: .5rem;
+    color: #fff;
+    padding: .2rem;
+}
+
+.product img{
+    width: 100%;
+}
+
+.stars{
+    display: grid;
+    grid-template-columns: 100%;
+    align-items: stretch;
+}
+.stars div{
+    display: flex;
+}
+.stars img{
+    width: 15px;
+    color: yellow;
+    fill: yellow;
+}
+.star label{
+    font-size: .75rem;
+}
+.star{
+    display: grid;
+    place-items: center;
+}
+
+
+
+
+
+@media screen and (max-width: 768px){
+.nav-logo img{
+    max-width: 130px;
+}
+}

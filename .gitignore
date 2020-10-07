@@ -9,3 +9,4 @@ dump.rdb
 celerybeat.pid
 .ipynb_checkpoints
 Untitled.ipynb
+staticfiles/

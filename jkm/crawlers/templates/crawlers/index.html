@@ -1,29 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-    <div>
-        <h1>Total: {{total_length}}</h1>
-    </div>
+{% extends 'crawlers/base.html' %}
+{% load static %}
+{% load template_filters %}
+
+{% block body_block %}
+<!-- <div class="no-products">
+    <h1>Total: {{total_length}}</h1>
+</div> -->
+<div class="products">
     {% for product in products.itertuples %}
-     Name - {{product.brand}} {{product.name }} <br>
-     Average Rating - {{product.avg_rating }}/5 <br>
-     Total number of Ratings - {{product.total_ratings }} <br>
-     Old Price - {{product.old_price }} <br>
-     New Price - {{product.new_price }}<br>
-    Discount - {{product.discount }} <br>
-    Discount percentage - {{product.discount_percentage }} <br>
-    Link - <a href="{{product.link }}" target="_blank">click here</a><br>
-    <b>Category</b> {{product.category}}<br>
-    <img src="{{product.image }}" width="100" alt="">
-    <br><br>
-    <hr>
-    <br><br>
+    <div class="product">
+        <a href="{{product.link }}" target="_blank">
+            <img src="{{product.image }}" width="100" alt="">
+            <div class="product-details">
+                <div class="name-container">
+                    <label for="" class="name"><b>{{product.brand}} {{product.name|truncatewords:9 }}</b></label>
+                </div>
+                <label for="" class="new-price">
+                    KSh {{product.new_price }}
+                </label>
+                <label for="" class="old-price">
+                    KSh {{product.old_price }}
+                </label><br>
+                <label for="" class="percentage-discount">
+                    {{product.discount_percentage }}% OFF
+                </label>
+                <div class="stars">
+                    <div>
+                        <div class="star">
+                            <img src="{% static 'starempty.svg' %}" alt="star" class="star">
+                            <label for="">{{product.avg_rating}}</label>
+                        </div>
+                        <label for="" class="avg-rating">
+                            ({{product.total_ratings }} Ratings)
+                        </label>
+                    </div>
+                </div>
+                <!-- <a href="{{product.link }}" target="_blank">View on {{product.site}}</a><br> -->
+            </div>
+        </a>
+    </div>
     {% endfor %}
-</body>
-</html>
+</div>
+{% endblock %}
