@@ -206,16 +206,12 @@ def task_scrap_kilimall():
     if os.environ.get('CURRENT_ENV') == 'production':
         chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
     
-    global driver
-    try:
-        if os.environ.get('CURRENT_ENV') == 'production':
-            driver = webdriver.Chrome(executable_path=str(
-                os.environ.get('CHROMEDRIVER_PATH')), options=options)
-        else:
-            driver = webdriver.Chrome(
-                ChromeDriverManager().install(), options=options)
-    except Exception as e:
-        print(e)
+    if os.environ.get('CURRENT_ENV') == 'production':
+        driver = webdriver.Chrome(executable_path=str(
+            os.environ.get('CHROMEDRIVER_PATH')), options=chrome_options)
+    else:
+        driver = webdriver.Chrome(
+            ChromeDriverManager().install(), options=chrome_options)
 
     driver.implicitly_wait(5)
 
