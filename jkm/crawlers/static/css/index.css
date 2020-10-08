@@ -30,7 +30,8 @@ nav{
 .nav-logo img{
     max-width: 150px;
 }
-.search-icon{
+
+.search-icon, .search-input{
     display: grid;
     font-size: .9rem;
     font-weight: bold;
@@ -58,6 +59,49 @@ margin: 0;
 .search-icon div{
     cursor: pointer;
 }
+
+
+
+.search-input{
+    margin-left: auto;
+    margin-top: auto;
+    position: relative;
+    display: none;
+    width: 350px;
+    margin-top: 3px;
+    margin-right: 20px;
+}
+.search-input::after{
+    content: '';
+    position: absolute;
+    background: #fff;
+    right: 0;
+    top: 0;
+    width: 50px; 
+    height: 34px;
+    margin-top: 2px;
+    margin-right: -7px;
+}
+.search-input .search-text{
+    height: 35px;
+    padding: 0 .5rem;
+    width: 340px;
+}   
+.search-input .search-img{
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 25px;
+    height: 40px;
+    z-index: 10;
+}
+.arrow, .back-arrow{
+    display: none;
+}
+
+
+
 
 .products{
     width: 100%;
@@ -184,15 +228,14 @@ border-radius: 2px;
     border-radius: 2px;
 }
 .pagination .disabled{
-    background: rgb(228, 228, 228);
+    background: rgb(243, 243, 243);
     margin-top: -.075rem;
     padding: .25rem 0rem;
     cursor: not-allowed;
 }
 
-
-
 @media screen and (max-width: 768px){
+
 .nav-logo img{
     max-width: 130px;
 }
@@ -201,5 +244,45 @@ border-radius: 2px;
 }
 .pagination{
     padding: 0;
+}
+.search-input{
+    width: 100% !important;
+    height: 100% !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.search-input .search-text{
+    width: 85% !important;
+    height: 100% !important;
+    border: none;
+    outline: none;
+    padding: 0;
+    padding-left: 13%;
+
+} 
+.search-input .search-img{
+    margin-right: 5px;
+    margin-top: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    border-radius: 2px;
+    box-shadow: 0px 0px 10px rgb(231, 231, 231);
+}
+.arrow{
+    display: grid;
+    position: absolute;
+    left: 0;
+    height: 100%;
+    width: 35px;
+    place-items: center;
+    margin: auto;
+    padding-left: 10px;
+}.search-input::after {
+    margin-right: 0;
+}
+.back-arrow{
+    display: block;
+    font-size: 1.75rem;
 }
 }
