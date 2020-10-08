@@ -3,17 +3,14 @@
 {% load template_filters %}
 
 {% block body_block %}
-<!-- <div class="no-products">
-    <h1>Total: {{total_length}}</h1>
-</div> -->
 <div class="products">
-    {% for product in products.itertuples %}
+    {% for product in page_obj %}
     <div class="product">
         <a href="{{product.link }}" target="_blank">
             <img src="{{product.image }}" width="100" alt="">
             <div class="product-details">
                 <div class="name-container">
-                    <label for="" class="name"><b>{{product.brand}} {{product.name|truncatewords:9 }}</b></label>
+                    <label for="" class="name"><b>{{product.brand}} {{product.name|truncatewords:12 }}</b></label>
                 </div>
                 <label for="" class="new-price">
                     KSh {{product.new_price }}
@@ -41,4 +38,47 @@
     </div>
     {% endfor %}
 </div>
+
+<div class="pagination-container">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+        <li>
+            <a href="?page=1">
+            First</a>
+        </li>
+        <li><a href="?page={{ page_obj.previous_page_number }}">
+                <</a>
+        </li>
+                {% else %}
+                <li class="disabled"><span class="chevron">
+                        <</span>
+                </li>
+                {% endif %}
+    
+                <!-- {% if page_obj.number|add:'-2' > 1 %}
+                <li><a href="?page={{ page_obj.number|add:'-3' }}">&hellip;</a></li>
+                {% endif %} -->
+    
+                {% for i in page_obj.paginator.page_range %}
+                {% if page_obj.number == i %}
+                <li class="active"><span>{{ i }} </span></li>
+                {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                <li><a href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+                {% endfor %}
+    
+                <!-- {% if page_obj.paginator.num_pages > page_obj.number|add:'2' %}
+                <li><a href="?page={{ page_obj.number|add:'3' }}">&hellip;</a></li>
+                {% endif %} -->
+    
+                {% if page_obj.has_next %}
+                <li><a href="?page={{ page_obj.next_page_number }}">></a></li>
+                <li>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                {% else %}
+                <li class="disabled"><span class="chevron">></span></li>
+                {% endif %}
+    </ul>
+</div>
+
 {% endblock %}

@@ -1,5 +1,5 @@
 html{
-    font-family: 'Nunito', sans-serif;
+    font-family: sans-serif;
 }
 body{
     background-color: rgb(255, 255, 255);
@@ -96,7 +96,6 @@ margin: 0;
     height: 100%;
     min-height: 30px;
     padding-bottom: .75rem;
-    height: 35px;
     overflow: hidden;
 }
 
@@ -155,12 +154,52 @@ margin: 0;
     place-items: center;
 }
 
+.pagination-container{
+    width: 100%;
+    display: grid;
+    justify-content: end;
+    padding: 1rem 0 3rem 0;
+}
+.pagination{
+    display: block;
+    width: 100%;
+}
+.pagination li{
+    list-style: none;
+    float: left;
+    margin: .2rem;
+}
 
+.pagination li a, .pagination li .chevron{
+padding: .25rem .5rem;
+border: 1px solid silver;
+border-radius: 2px;
+}
+.pagination .active{
+    background:#F68B1E;
+    padding: .25rem .5rem;
+    margin: auto;
+    margin-top: -.1rem;
+    border: 1px solid silver;
+    border-radius: 2px;
+}
+.pagination .disabled{
+    background: rgb(228, 228, 228);
+    margin-top: -.075rem;
+    padding: .25rem 0rem;
+    cursor: not-allowed;
+}
 
 
 
 @media screen and (max-width: 768px){
 .nav-logo img{
     max-width: 130px;
+}
+.pagination-container{
+    justify-content: center;
+}
+.pagination{
+    padding: 0;
 }
 }

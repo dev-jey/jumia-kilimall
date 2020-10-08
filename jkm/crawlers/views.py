@@ -5,6 +5,7 @@ from .models import AllData
 from django.http import HttpResponse
 import requests
 from bs4 import BeautifulSoup
+from django.core.paginator import Paginator
 
 
 def index(request):
@@ -33,7 +34,10 @@ def index(request):
         R = qualified_products['avg_rating']
         qualified_products['score'] = (v/(v+m) * R) + (m/(m+v) * C) + ((r*v/r) * C)
         qualified_products.sort_values(by=['score'], inplace=True, ascending=False)
-        return render(request, 'crawlers/index.html', {'products': qualified_products, 'total_length': len(qualified_products)})
+        paginator = Paginator(qualified_products.to_dict(orient='records'), 60)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, 'crawlers/index.html', {'page_obj': page_obj})
     except BaseException as e:
         print(e)
 
