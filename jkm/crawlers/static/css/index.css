@@ -34,7 +34,6 @@ nav{
 .search-icon, .search-input{
     display: grid;
     font-size: .9rem;
-    font-weight: bold;
     align-content: center;
     justify-content: end;
     width: 100%;
@@ -47,11 +46,11 @@ width: 1.2rem;
 padding: 0;
 margin: 0;
 }
+
 .search-icon div{
     display: flex;
 }
 .search-icon label{
-    font-weight: bolder;
     height: 100%;
     cursor: pointer;
 }
@@ -95,13 +94,38 @@ margin: 0;
     width: 25px;
     height: 40px;
     z-index: 10;
+    outline: none;
+    padding: 0 .75rem;
 }
 .arrow, .back-arrow{
     display: none;
 }
 
+.search{
+    height: 200px;
+    display: grid;
+    font-size: 1.75rem;
+    font-weight: bold;
+    place-items: center;
+}
 
-
+.search-no{
+    height: calc(100vh - 200px);
+    display: grid;
+    place-items: center;
+    text-align: center;
+}
+.search-no div{
+    height: 200px;
+}
+.search-no p{
+    color: rgb(121, 121, 121);
+}
+.search-no a{
+    background: #F68B1E;
+    padding: .5rem 1rem;
+    color: #fff;
+}
 
 .products{
     width: 100%;
@@ -216,7 +240,7 @@ margin: 0;
 
 .pagination li a, .pagination li .chevron{
 padding: .25rem .5rem;
-border: 1px solid silver;
+border: 1px solid rgb(240, 240, 240);
 border-radius: 2px;
 }
 .pagination .active{
@@ -224,7 +248,6 @@ border-radius: 2px;
     padding: .25rem .5rem;
     margin: auto;
     margin-top: -.1rem;
-    border: 1px solid silver;
     border-radius: 2px;
 }
 .pagination .disabled{

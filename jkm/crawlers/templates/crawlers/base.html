@@ -16,13 +16,14 @@
     <nav>
         <div class="container nav-container">
             <div class="nav-logo">
-                <img src="{% static 'imgs/navlogo.svg' %}" alt="">
+                <a href="/">
+                <img src="{% static 'imgs/navlogo.svg' %}" alt=""></a>
             </div>
 
             <div class="search-icon">
                 <div id="search-icon">
                     <img src="{% static 'imgs/search.svg' %}" alt="">
-                    <label for=""><b>Search</b></label>
+                    <label for="">Search</label>
                 </div>
 
                 <form action="" class="search-input animate__animated animate__fadeInRight" id="search-bar"
@@ -30,8 +31,8 @@
                     <div class="arrow" id="arrow">
                         <img src="{% static 'imgs/arrow.svg' %}" alt="" class="back-arrow" id="back-arrow">
                     </div>
-                    <input type="text" placeholder="Search by name" class="search-text">
-                    <input type="image" src="{% static 'imgs/search.svg' %}" alt="Submit" class="search-img">
+                    <input type="text" placeholder="Search by name" class="search-text" id="search-text" required>
+                    <input type="image" src="{% static 'imgs/search.svg' %}" alt="Submit" class="search-img" id="search-img">
                 </form>
             </div>
         </div>
@@ -39,7 +40,7 @@
 
     <div class="main-section">
         <div class="container">
-            {% block body_block %}No Products{% endblock %}
+            {% block body_block %} {% endblock %}
         </div>
     </div>
     <script src="{% static 'js/jquery.js' %}"></script>
