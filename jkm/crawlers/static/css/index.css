@@ -28,7 +28,7 @@ nav{
     grid-template-columns: 50% 50%;
 }
 .nav-logo img{
-    max-width: 280px;
+    max-width: 250px;
     margin-top: .15rem;
 }
 
