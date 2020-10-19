@@ -16,6 +16,8 @@ def index(request):
     try:
         products = AllData.objects.filter().values()
         print(len(products))
+        if not products:
+            return render(request, 'crawlers/index.html', {'products': [], 'total_length': 0})
         qualified_products = sort_products(products)
         paginator = Paginator(qualified_products.to_dict(orient='records'), 60)
         page_number = request.GET.get('page')
