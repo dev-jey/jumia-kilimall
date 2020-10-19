@@ -257,6 +257,22 @@ border-radius: 2px;
     cursor: not-allowed;
 }
 
+#loading{
+    background: orange;
+    display: grid;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    left: 0;
+    place-content: center;
+    width: 100%;
+    z-index: 10000;
+    text-align: center;
+    color: #fff;
+    font-weight: bolder;
+    font-size: 1.25rem;
+}
+
 @media screen and (max-width: 768px){
 
 .nav-logo img{

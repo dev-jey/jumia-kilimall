@@ -13,3 +13,7 @@ $('#search-bar').submit((e) => {
   var search = $('#search-text').val();
   window.location.replace(`/search?key=${search}`);
 })
+
+$(document).ready(function() {
+  $('#loading').hide();
+});
