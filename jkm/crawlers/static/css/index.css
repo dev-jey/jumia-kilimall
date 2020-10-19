@@ -329,7 +329,7 @@ border-radius: 2px;
 }
 }
 
-@media screen and (max-width: 440px){
+@media screen and (max-width: 540px){
     .nav-logo{
         display: grid;
         width: 100%;
