@@ -361,8 +361,6 @@ border-radius: 2px;
     display: none;
 }
 .search-input .search-text{
-    width: 100% !important;
     padding: auto;
-    margin-left: -1.75rem !important;
 } 
 }
