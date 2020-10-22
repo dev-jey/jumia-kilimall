@@ -6,6 +6,10 @@ class Sites(models.Model):
     name = models.CharField(max_length=100)
 
 
+    def __str__(self):
+        return self.name
+
+
 class AllData(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True)
     brand = models.CharField(max_length=255,null=True, blank=True)

@@ -52,9 +52,10 @@ def search(request):
     '''
     Get all records and render them to the user searched
     '''
-    search = request.GET.get('key') or ''
+    s = request.GET.get('key') or ''
+    search = s.lower().replace('%20', ' ')
     try:
-        products = AllData.objects.filter(Q(name__contains=search) | Q(brand__contains=search)).values()
+        products = AllData.objects.filter(Q(name__icontains=search) | Q(brand__contains=search)).values()
         if not products:
             return render(request, 'crawlers/index.html', {'products': [], 'total_length': 0})
         qualified_products = sort_products(products)
