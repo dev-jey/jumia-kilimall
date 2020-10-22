@@ -44,6 +44,7 @@ itemloaders==1.0.3
 jedi==0.17.2
 Jinja2==2.11.2
 jmespath==0.10.0
+joblib==0.17.0
 jsonschema==3.2.0
 jupyter==1.0.0
 jupyter-client==6.1.7
@@ -71,6 +72,7 @@ prometheus-client==0.8.0
 prompt-toolkit==3.0.7
 Protego==0.1.16
 psycopg2==2.8.6
+psycopg2-binary==2.8.6
 ptyprocess==0.6.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
@@ -89,15 +91,19 @@ QtPy==1.9.0
 queuelib==1.5.0
 redis==3.5.3
 requests==2.24.0
+scikit-learn==0.23.2
+scipy==1.5.3
 Scrapy==2.3.0
 selenium==3.141.0
 Send2Trash==1.5.0
 service-identity==18.1.0
 six==1.15.0
+sklearn==0.0
 soupsieve==2.0.1
 sqlparse==0.4.0
 terminado==0.9.1
 testpath==0.4.4
+threadpoolctl==2.1.0
 tornado==6.0.4
 traitlets==5.0.4
 Twisted==20.3.0

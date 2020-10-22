@@ -328,6 +328,8 @@ def sort_products(driver, gc_id, category_name):
                             'category': category}
             LOGGER.info("Saving " + category + " products to database....")
             kilimall_site = Sites.objects.get(name="Kilimall")
+            if AllData.objects.filter(name=name):
+                return True
             AllData.objects.update_or_create(
                 name=name,
                 brand='',
