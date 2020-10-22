@@ -350,10 +350,10 @@ celery_app.conf.beat_schedule = {
     # Execute every x minutes.
     'run-kilimall-task': {
         'task': 'scrap-kilimall',
-        'schedule': crontab(minute=os.environ.get('CELERY_TIME', '')),
+        'schedule': crontab(minute=os.environ.get('CELERY_TIME_K', '')),
     },
     'run-jumia-task': {
         'task': 'scrap-jumia',
-        'schedule': crontab(minute=os.environ.get('CELERY_TIME', '')),
+        'schedule': crontab(minute=os.environ.get('CELERY_TIME_J', '')),
     },
 }

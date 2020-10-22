@@ -54,7 +54,8 @@ celery -A jkm worker --loglevel=info --concurrency=1 --beat
 ### Env Variables
 
 ```
-export CELERY_TIME=*/5
+export CELERY_TIME_J=*/60
+export CELERY_TIME_K=*/1200
 export DB_NAME=name
 export DB_USER=user
 export REDIS_URL=redis://127.0.0.1:6379
