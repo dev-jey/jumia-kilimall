@@ -59,7 +59,7 @@ def persist_to_db(soup, category, total_length, all_products):
     '''
     Save items to the database
     '''
-    products = soup.find_all(class_="sku")
+    products = soup.find_all(class_="-paxs")
     product_details = sort_product_details_out(products, category)
     total_length += product_details['length']
     all_products.append(product_details['prods'])
