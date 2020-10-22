@@ -286,6 +286,19 @@ border-radius: 2px;
     width: 50px;
 
 }
+.best-deals{
+    position: relative;
+}
+.best-deals::after{
+    position: absolute;
+    content: '';
+    width: 80px;
+    height: 5px;
+    margin-bottom: -1.5rem;
+    background-color: orange;
+    bottom: 0;
+    left: 0;
+}
 
 @media screen and (max-width: 768px){
 
