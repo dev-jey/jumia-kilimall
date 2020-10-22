@@ -270,18 +270,36 @@ border-radius: 2px;
     text-align: center;
     color: #fff;
     font-weight: bolder;
-    font-size: 1.25rem;
+    font-size: .55rem;
+}
+#loading img{
+    width: 100px;
+}
+.a-site{
+    display: grid;
+    place-items: end;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+.a-site img{
+    width: 50px;
+
 }
 
 @media screen and (max-width: 768px){
 
+    .nav-container{
+        padding-top: .5rem;
+        padding-bottom: .5rem;
+    }
 .nav-logo img{
     max-width: 240px;
     margin-top: 0rem;
     margin-bottom: -.25rem;
 }
 .search-input .search-img{
-    height: 35px;}
+    height: 80%;}
 .pagination-container{
     justify-content: center;
 }
@@ -334,15 +352,18 @@ border-radius: 2px;
 }
 
 @media screen and (max-width: 540px){
+    .nav-container{
+        padding-top: .5rem;
+        padding-bottom: .5rem;
+    }
 .nav-logo img{
     max-width: 300px;
     width: 200px;
     margin-top: 0rem;
     margin-bottom: -.25rem;
 }
-
 .search-input .search-img{
-    height: 30px;}
+    height: 80%;}
 .search-input{
     margin-top: 0;
     height: 200px;
